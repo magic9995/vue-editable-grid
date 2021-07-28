@@ -51,7 +51,7 @@ div.vue-editable-grid
               :cellEditing='cellEditing'
               :cellsWithErrors='cellsWithErrors'
               :onlyBorder='onlyBorder'
-              @click='selectCell(offsetRows + rowIndex, columnIndex, $event)'
+              @click='tryEdit(row, column, offsetRows + rowIndex, columnIndex)'
               @dblclick='tryEdit(row, column, offsetRows + rowIndex, columnIndex)'
               @edited='cellEdited'
               @edit-cancelled='cellEditing = []'
