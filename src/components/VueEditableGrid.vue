@@ -387,6 +387,7 @@ export default {
       return new Promise(resolve => {
         if (!valueChanged) {
           this.cellEditing = []
+          console.log("returned")
           resolve()
           return
         }
@@ -425,7 +426,10 @@ export default {
           this.setCellError(rowIndex, columnIndex, false)
         }
 
-        this.$emit('cell-updated', { value, row, column, rowIndex, columnIndex, $event, preventDefault, markAsPending, confirm, markAsFailed, markAsSuccess })
+        if(!valueChanged){
+          this.$emit('cell-updated', { value, row, column, rowIndex, columnIndex, $event, preventDefault, markAsPending, confirm, markAsFailed, markAsSuccess })
+        }
+        
         if (prevent) {
           this.cellEditing = []
           resolve()
