@@ -154,7 +154,7 @@ export default {
         if (sameDates(value, this.rowValue)) valueChanged = false
       }
       const { row, column, rowIndex, columnIndex } = this
-      if(valueChanged){
+      if (valueChanged) {
         this.$emit('edited', { row, column, rowIndex, columnIndex, $event, value, valueChanged })
       }
     },
