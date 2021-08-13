@@ -1,7 +1,7 @@
 <template lang="pug">
 td.cell.noselect(
   :id='`cell${rowIndex}-${columnIndex}`'
-  :class='{ selected: !onlyBorder && selected, "selected-top": selectedTop, "selected-right": selectedRight, "selected-bottom": selectedBottom, "selected-left": selectedLeft, editable, invalid, [column.type || "text"]: true }'
+  :class='{ selected: !onlyBorder && selected, "selected-top": selectedTop, "selected-right": selectedRight, "selected-bottom": selectedBottom, "selected-left": selectedLeft, editable, invalid, [column.type || "text"]: true, "item1": item }'
   :title='invalid'
   :style='cellStyle'
   @click='$emit("click", $event)'
@@ -11,7 +11,7 @@ td.cell.noselect(
   @mouseover='$emit("mouseover", $event)'
   @mouseup='$emit("mouseup", $event)'
 )
-  span.editable-field(v-if='cellEditing[0] === rowIndex && cellEditing[1] === columnIndex')
+  span.editable-field(v-if='cellEditing[0] === rowIndex && cellEditing[1] === columnIndex && this.row.cat !== "item1"')
     select(v-if='(inputType === "select")'
       class='grid-select'
       ref='input'
@@ -88,6 +88,13 @@ export default {
     invalid () {
       return this.cellsWithErrors[`cell${this.rowIndex}-${this.columnIndex}`]
     },
+    item () {
+      if (this.row.cat === 'item1') {
+        return true
+      } else {
+        return false
+      }
+    },
     inputType () {
       switch (this.column.type) {
         case 'text': return 'text'
@@ -108,7 +115,7 @@ export default {
   },
   watch: {
     cellEditing () {
-      if (this.cellEditing[0] === this.rowIndex && this.cellEditing[1] === this.columnIndex) {
+      if (this.cellEditing[0] === this.rowIndex && this.cellEditing[1] === this.columnIndex && this.row.cat !== 'item1') {
         this.rowValue = this.getEditableValue(this.row[this.column.field])
         this.value = this.getEditableValue(this.cellEditing[2] || this.row[this.column.field])
 
@@ -149,13 +156,16 @@ export default {
       const value = cellValueParser(this.column, this.row, this.$refs.input.value, true)
       this.editPending = false
       let valueChanged = true
-      if (value === this.rowValue) valueChanged = false
-      else if (value && (this.column.type === 'date' || this.column.type === 'datetime')) {
+      if (value === parseInt(this.rowValue)) {
+        valueChanged = false
+      } else if (value && (this.column.type === 'date' || this.column.type === 'datetime')) {
         if (sameDates(value, this.rowValue)) valueChanged = false
       }
       const { row, column, rowIndex, columnIndex } = this
       if (valueChanged) {
         this.$emit('edited', { row, column, rowIndex, columnIndex, $event, value, valueChanged })
+      } else {
+        this.editCancelled()
       }
     },
     editCancelled () {
@@ -171,22 +181,7 @@ export default {
     }
   }
 }
-</script>
-
-<style lang="scss" scoped>
-@import './variables';
-
-.cell {
-  padding: 0 $cell-side-paddings;
-  position: relative;
-  display: flex;
-  align-items: center;
-
-  border: solid 1px transparent;
-  border-bottom-color: $cell-border-color;
-  border-right-color: $cell-border-color;
-  cursor: default;
-
+/*
   &.selected {
     border-color: $cell-selected-border-color;
   }
@@ -206,6 +201,22 @@ export default {
   &.selected-left {
     border-left-color: $cell-selected-border-color;
   }
+*/
+</script>
+
+<style lang="scss" scoped>
+@import './variables';
+
+.cell {
+  padding: 0 $cell-side-paddings;
+  position: relative;
+  display: flex;
+  align-items: center;
+
+  border: solid 1px transparent;
+  border-bottom-color: $cell-border-color;
+  border-right-color: $cell-border-color;
+  cursor: default;
 
   &.currency,
   &.numeric,
@@ -232,6 +243,10 @@ export default {
     }
   }
 
+  &.item1 {
+    background-color: #c4c4c4;
+  }
+
   .cell-content {
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -251,7 +266,7 @@ export default {
       width: 100%;
 
       &:disabled {
-        background: #eeeeee;
+        background: #67ab92;
         cursor: not-allowed;
       }
     }

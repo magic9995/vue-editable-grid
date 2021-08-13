@@ -52,7 +52,7 @@ div.vue-editable-grid
               :cellsWithErrors='cellsWithErrors'
               :onlyBorder='onlyBorder'
               @click='tryEdit(row, column, offsetRows + rowIndex, columnIndex)'
-              @dblclick='tryEdit(row, column, offsetRows + rowIndex, columnIndex)'
+              @dblclick=''
               @edited='cellEdited'
               @edit-cancelled='cellEditing = []'
               @link-clicked='linkClicked(row, column, offsetRows + rowIndex, columnIndex)'
@@ -362,6 +362,7 @@ export default {
       if (column.editable) {
         this.cellEditing = [rowIndex, columnIndex, newValue]
       }
+      this.$emit('cell-clicked', { rowIndex, columnIndex })
     },
     linkClicked (rowData, colData, rowIndex, colIndex, newValue) {
       this.$emit('link-clicked', { rowData, colData, rowIndex, colIndex })
@@ -387,7 +388,6 @@ export default {
       return new Promise(resolve => {
         if (!valueChanged) {
           this.cellEditing = []
-          console.log('returned')
           resolve()
           return
         }
