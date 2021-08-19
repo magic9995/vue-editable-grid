@@ -34,7 +34,7 @@ div.vue-editable-grid
             :key='index'
             :class='{ filter: column.filter }'
           )
-            input(type='text' v-model='filter[column.field]' v-if='column.filter' placeholder='Search with , or &' @input='filtersChanged')
+            input(type='text' v-model='filter[column.field]' v-if='column.filter'  @input='filtersChanged')
       tbody(ref='body')
         div(:style=' { "min-height": `${rowDataPage.length * itemHeight}px` }')
           tr.gridrow(v-for='(row, rowIndex) in visibleRows' :key='row[rowDataKey]' :style='{ "grid-template-columns": gridTemplateColumns, transform: `translateY(${(itemHeight * rowIndex) + ((itemHeight * offsetRows))}px)`, height: `${itemHeight}px` }')
@@ -359,7 +359,8 @@ export default {
       }
     },
     tryEdit (row, column, rowIndex, columnIndex, newValue) {
-      if (column.editable) {
+      console.log(row)
+      if (column.editable && row.cat !== 'item1') {
         this.cellEditing = [rowIndex, columnIndex, newValue]
       }
       this.$emit('cell-clicked', { rowIndex, columnIndex })

@@ -38,6 +38,8 @@ td.cell.noselect(
       @blur='leaved'
     )
   span.cell-content(v-else)
+    img(v-if='row.cat=== "item1" && column.field==="item1" && row.expand === "collapsed"' src="@/assets/closed-icon.jpg")
+    img(v-if='row.cat=== "item1" && column.field==="item1" && row.expand === "expanded"' src="@/assets/down-icon.jpg")
     a(@click.prevent='linkClicked' v-if='column.type === "link"' href='#') {{ row[column.field] | cellFormatter(column, row) }}
     span(v-else) {{ row[column.field] | cellFormatter(column, row) }}
 </template>
@@ -64,7 +66,7 @@ export default {
     onlyBorder: { type: Boolean }
   },
   data () {
-    return { value: null, rowValue: null, editPending: false }
+    return { value: null, rowValue: null, editPending: false, cell: document.getElementsByClassName('cell-content') }
   },
   computed: {
     selected () {
@@ -115,6 +117,7 @@ export default {
   },
   watch: {
     cellEditing () {
+      console.log(this.cell)
       if (this.cellEditing[0] === this.rowIndex && this.cellEditing[1] === this.columnIndex && this.row.cat !== 'item1') {
         this.rowValue = this.getEditableValue(this.row[this.column.field])
         this.value = this.getEditableValue(this.cellEditing[2] || this.row[this.column.field])
